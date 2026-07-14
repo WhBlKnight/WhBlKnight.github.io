@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' file: data: blob:; font-src 'self' data:; media-src 'self' file: data: blob: https://svs.gsfc.nasa.gov; base-uri 'none'; form-action 'none';">
+  <title>빛의 속도, 시간, 그리고 블랙홀</title>
+  <style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#030817}body{min-height:100vh}</style>
+</head>
+<body>
+<main id="physics-presentation" lang="ko" aria-label="빛의 속도, 시간, 블랙홀 발표">
+  <style>
+    #physics-presentation {
+      --ink: #edf4ff;
+      --muted: #aab9d6;
+      --blue: #6cc5ff;
+      --violet: #a98aff;
+      --coral: #ff9e91;
+      --line: rgba(190, 216, 255, .2);
+      --panel: rgba(11, 23, 52, .52);
+      position: relative;
+      box-sizing: border-box;
+      min-height: 100svh;
+      overflow: hidden;
+      padding: clamp(1.1rem, 3.4vw, 3.4rem);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(108, 197, 255, .18), transparent 22%),
+        radial-gradient(circle at 86% 78%, rgba(169, 138, 255, .16), transparent 24%),
+        radial-gradient(circle at 73% 18%, rgba(255, 158, 145, .08), transparent 13%),
+        #030817;
+      font-family: Inter, Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+      outline: none;
+      isolation: isolate;
+    }
+    #physics-presentation::before,
+    #physics-presentation::after {
+      position: absolute;
+      z-index: -1;
+      width: 2px;
+      height: 2px;
+      content: "";
+      background: white;
+      border-radius: 50%;
+      box-shadow:
+        8vw 9vh 0 -0.4px rgba(255,255,255,.8),
+        18vw 52vh 0 -0.6px rgba(255,255,255,.9),
+        23vw 16vh 0 -0.5px rgba(255,255,255,.75),
+        31vw 84vh 0 -0.45px rgba(255,255,255,.8),
+        39vw 27vh 0 -0.4px rgba(255,255,255,.7),
+        48vw 61vh 0 -0.55px rgba(255,255,255,.9),
+        54vw 8vh 0 -0.35px rgba(255,255,255,.75),
+        62vw 43vh 0 -0.5px rgba(255,255,255,.8),
+        72vw 69vh 0 -0.45px rgba(255,255,255,.85),
+        84vw 36vh 0 -0.6px rgba(255,255,255,.8),
+        94vw 14vh 0 -0.4px rgba(255,255,255,.7);
+      opacity: .7;
+    }
+    #physics-presentation::before { top: 7%; left: 3%; }
+    #physics-presentation::after { right: 15%; bottom: 12%; opacity: .45; transform: scale(.7); }
+    #physics-presentation * { box-sizing: border-box; }
+    #physics-presentation .deck {
+      position: relative;
+      min-height: calc(100svh - clamp(2.2rem, 6.8vw, 6.8rem));
+    }
+    #physics-presentation .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-content: center;
+      width: 100%;
+      animation: slide-in .5s cubic-bezier(.2,.76,.3,1) both;
+    }
+    #physics-presentation .slide.active { display: grid; }
+    #physics-presentation .slide > * { max-width: 1050px; }
+    #physics-presentation .eyebrow,
+    #physics-presentation .mini-label {
+      margin: 0 0 .9rem;
+      color: var(--blue);
+      font-size: clamp(.72rem, 1.35vw, .92rem);
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    #physics-presentation .slide-number {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: var(--muted);
+      font-size: .8rem;
+      letter-spacing: .14em;
+    }
+    #physics-presentation h1,
+    #physics-presentation h2,
+    #physics-presentation h3,
+    #physics-presentation p { margin-top: 0; }
+    #physics-presentation h1 {
+      max-width: 900px;
+      margin-bottom: 1.35rem;
+      font-size: clamp(2.5rem, 7.4vw, 6.7rem);
+      font-weight: 750;
+      line-height: .99;
+      letter-spacing: -.065em;
+    }
+    #physics-presentation h2 {
+      max-width: 850px;
+      margin-bottom: 1.25rem;
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      font-weight: 730;
+      line-height: 1.04;
+      letter-spacing: -.055em;
+    }
+    #physics-presentation h3 {
+      margin-bottom: .45rem;
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
+      line-height: 1.22;
+    }
+    #physics-presentation .lead {
+      max-width: 680px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      line-height: 1.65;
+    }
+    #physics-presentation .gradient-text {
+      color: transparent;
+      background: linear-gradient(110deg, #8de0ff 8%, #b39cff 52%, #ffd0a8 100%);
+      background-clip: text;
+    }
+    #physics-presentation .keyline {
+      width: min(31rem, 78vw);
+      height: 1px;
+      margin: 1.8rem 0;
+      background: linear-gradient(90deg, var(--blue), transparent);
+    }
+    #physics-presentation .question-grid,
+    #physics-presentation .two-up,
+    #physics-presentation .three-up,
+    #physics-presentation .perspective-grid {
+      display: grid;
+      gap: clamp(1rem, 3.4vw, 2.6rem);
+      width: min(100%, 1000px);
+    }
+    #physics-presentation .question-grid,
+    #physics-presentation .two-up,
+    #physics-presentation .perspective-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #physics-presentation .three-up { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #physics-presentation .question,
+    #physics-presentation .fact,
+    #physics-presentation .perspective {
+      padding: clamp(1rem, 2.4vw, 1.8rem);
+      border-top: 1px solid var(--line);
+      background: linear-gradient(115deg, var(--panel), transparent 85%);
+    }
+    #physics-presentation .question span,
+    #physics-presentation .fact span,
+    #physics-presentation .perspective span {
+      display: block;
+      margin-bottom: .7rem;
+      color: var(--blue);
+      font-size: .74rem;
+      font-weight: 750;
+      letter-spacing: .13em;
+    }
+    #physics-presentation .question strong {
+      display: block;
+      font-size: clamp(1.35rem, 2.8vw, 2.4rem);
+      font-weight: 690;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+    #physics-presentation .formula {
+      margin: .7rem 0 1.1rem;
+      color: #f8fbff;
+      font-family: "Times New Roman", "Noto Serif KR", serif;
+      font-size: clamp(2.05rem, 5.8vw, 5.15rem);
+      font-weight: 500;
+      letter-spacing: -.03em;
+      line-height: 1.12;
+    }
+    #physics-presentation .formula.small { font-size: clamp(1.28rem, 3.1vw, 2.7rem); }
+    #physics-presentation sub,
+    #physics-presentation sup { font-size: .58em; }
+    #physics-presentation .formula-note {
+      max-width: 650px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: clamp(.9rem, 1.7vw, 1.15rem);
+      line-height: 1.6;
+    }
+    #physics-presentation .emphasis { color: #fff4dd; }
+    #physics-presentation .tag {
+      display: inline-block;
+      padding: .35rem .6rem;
+      border: 1px solid rgba(108,197,255,.35);
+      color: var(--blue);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    #physics-presentation .velocity-visual {
+      position: relative;
+      width: min(100%, 940px);
+      height: clamp(12rem, 26vw, 17rem);
+      margin-top: 1.2rem;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    #physics-presentation .velocity-axis {
+      position: absolute;
+      right: 3%;
+      bottom: 1.35rem;
+      left: 3%;
+      height: 1px;
+      background: var(--line);
+    }
+    #physics-presentation .velocity-axis::after {
+      position: absolute;
+      top: -4px;
+      right: 0;
+      width: 8px;
+      height: 8px;
+      content: "";
+      border-top: 1px solid var(--blue);
+      border-right: 1px solid var(--blue);
+      transform: rotate(45deg);
+    }
+    #physics-presentation .velocity-label {
+      position: absolute;
+      right: 2%;
+      bottom: -.1rem;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    #physics-presentation .c-line {
+      position: absolute;
+      top: 8%;
+      bottom: 1.35rem;
+      left: 88%;
+      width: 1px;
+      background: linear-gradient(var(--coral), rgba(255,158,145,.1));
+    }
+    #physics-presentation .c-line span {
+      position: absolute;
+      top: -.1rem;
+      left: .45rem;
+      color: var(--coral);
+      font-size: .78rem;
+      white-space: nowrap;
+    }
+    #physics-presentation .energy-curve {
+      position: absolute;
+      top: 8%;
+      right: 11.5%;
+      bottom: 1.35rem;
+      left: 4%;
+    }
+    #physics-presentation .energy-curve path {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 8px rgba(108,197,255,.35));
+    }
+    #physics-presentation .energy-curve .arrow {
+      fill: var(--coral);
+      stroke: none;
+    }
+    #physics-presentation .curve-caption {
+      position: absolute;
+      top: 12%;
+      right: 1%;
+      max-width: 11rem;
+      color: var(--muted);
+      font-size: clamp(.8rem, 1.5vw, 1rem);
+      line-height: 1.45;
+    }
+    #physics-presentation .callout {
+      max-width: 700px;
+      margin-top: 1.1rem;
+      padding-left: 1rem;
+      border-left: 2px solid var(--violet);
+      color: #e6ddff;
+      font-size: clamp(1rem, 1.9vw, 1.28rem);
+      line-height: 1.55;
+    }
+    #physics-presentation .photon-scene {
+      position: relative;
+      min-height: clamp(13rem, 31vw, 20rem);
+      overflow: hidden;
+    }
+    #physics-presentation .photon-ring {
+      position: absolute;
+      top: 50%;
+      left: 14%;
+      width: clamp(5rem, 10vw, 8rem);
+      aspect-ratio: 1;
+      border: 1px solid rgba(108,197,255,.46);
+      border-radius: 50%;
+      box-shadow: 0 0 44px rgba(108,197,255,.2), inset 0 0 28px rgba(108,197,255,.13);
+      transform: translateY(-50%);
+    }
+    #physics-presentation .photon-ring::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1rem;
+      aspect-ratio: 1;
+      content: "";
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 30px 10px rgba(149,224,255,.9);
+      transform: translate(-50%, -50%);
+    }
+    #physics-presentation .wave {
+      position: absolute;
+      top: 50%;
+      right: 4%;
+      left: 28%;
+      height: 5rem;
+      transform: translateY(-50%);
+      background:
+        radial-gradient(ellipse 1rem 2.2rem at 6% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 18% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 30% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 42% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 54% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 66% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 78% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%),
+        radial-gradient(ellipse 1rem 2.2rem at 90% 50%, transparent 42%, var(--violet) 45% 47%, transparent 50%);
+      background-repeat: no-repeat;
+      opacity: .85;
+    }
+    #physics-presentation .timeline {
+      display: grid;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      gap: 0 1.4rem;
+      max-width: 820px;
+      margin-top: .5rem;
+    }
+    #physics-presentation .timeline .year {
+      position: relative;
+      padding: 1.1rem 0;
+      color: var(--blue);
+      font-size: 1.1rem;
+      font-weight: 750;
+    }
+    #physics-presentation .timeline .year::after {
+      position: absolute;
+      top: 50%;
+      right: -.85rem;
+      width: .55rem;
+      height: .55rem;
+      content: "";
+      border: 2px solid var(--blue);
+      border-radius: 50%;
+      background: #07142d;
+      transform: translateY(-50%);
+    }
+    #physics-presentation .timeline .copy {
+      padding: 1.1rem 0 1.1rem 1.5rem;
+      border-left: 1px solid var(--line);
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    #physics-presentation .timeline .copy strong { color: var(--ink); }
+    #physics-presentation .spacetime-visual {
+      position: relative;
+      width: min(100%, 940px);
+      height: clamp(15rem, 37vw, 23rem);
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+    #physics-presentation .spacetime-visual svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    #physics-presentation .spacetime-visual path {
+      fill: none;
+      stroke: rgba(141,224,255,.45);
+      stroke-width: 1;
+    }
+    #physics-presentation .mass-orb {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(2.3rem, 5vw, 3.7rem);
+      aspect-ratio: 1;
+      border: 1px solid rgba(255,224,184,.8);
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #fff7d5, #ffbc8c 35%, #9e5a80 77%, #2f1a54);
+      box-shadow: 0 0 38px rgba(255,184,140,.42);
+      transform: translate(-50%, -37%);
+    }
+    #physics-presentation .spacetime-caption {
+      position: absolute;
+      right: 5%;
+      bottom: 3%;
+      max-width: 15rem;
+      color: var(--muted);
+      font-size: .89rem;
+      line-height: 1.45;
+    }
+    #physics-presentation .metric-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(14rem, .75fr);
+      gap: clamp(1.2rem, 5vw, 5rem);
+      align-items: center;
+      width: min(100%, 1080px);
+    }
+    #physics-presentation .metric-copy { min-width: 0; }
+    #physics-presentation .radius-diagram {
+      position: relative;
+      width: min(100%, 21rem);
+      margin: auto;
+      aspect-ratio: 1;
+      border: 1px solid rgba(169,138,255,.25);
+      border-radius: 50%;
+      background: radial-gradient(circle, #01030b 0 19%, rgba(83,48,119,.4) 19.5%, transparent 20% 41%, rgba(108,197,255,.48) 41.5% 42%, transparent 42.5%);
+    }
+    #physics-presentation .radius-diagram::before {
+      position: absolute;
+      top: 50%;
+      right: 8%;
+      left: 50%;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, rgba(255,255,255,.7), var(--blue));
+    }
+    #physics-presentation .radius-diagram .center-label,
+    #physics-presentation .radius-diagram .horizon-label,
+    #physics-presentation .radius-diagram .r-label {
+      position: absolute;
+      font-size: .75rem;
+      line-height: 1.3;
+    }
+    #physics-presentation .radius-diagram .center-label { top: 44%; left: 13%; color: var(--coral); }
+    #physics-presentation .radius-diagram .horizon-label { top: 16%; right: 0; color: var(--blue); }
+    #physics-presentation .radius-diagram .r-label { top: 53%; right: 6%; color: var(--muted); }
+    #physics-presentation .radius-diagram .black-hole {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 39%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #091029 0, #000 48%, #000 100%);
+      box-shadow: 0 0 25px rgba(169,138,255,.4);
+      transform: translate(-50%, -50%);
+    }
+    #physics-presentation .black-hole-film {
+      position: relative;
+      width: min(100%, 980px);
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      margin: .4rem 0 0;
+      background: #000;
+      box-shadow: 0 0 70px rgba(108,197,255,.16);
+    }
+    #physics-presentation .black-hole-film::after {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background: linear-gradient(90deg, rgba(3,8,23,.54), transparent 36%, transparent 72%, rgba(3,8,23,.28));
+    }
+    #physics-presentation .black-hole-film video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #physics-presentation .film-credit {
+      position: absolute;
+      right: .8rem;
+      bottom: .65rem;
+      z-index: 1;
+      margin: 0;
+      color: rgba(237,244,255,.72);
+      font-size: .68rem;
+      letter-spacing: .04em;
+    }
+    #physics-presentation .film-note {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1;
+      margin: 0;
+      color: rgba(237,244,255,.87);
+      font-size: clamp(.78rem, 1.4vw, .98rem);
+      font-weight: 650;
+      letter-spacing: .08em;
+    }
+    #physics-presentation.video-active {
+      padding: 0;
+      background: #000;
+    }
+    #physics-presentation.video-active::before,
+    #physics-presentation.video-active::after { display: none; }
+    #physics-presentation.video-active .deck { min-height: 100svh; }
+    #physics-presentation.video-active .video-slide { align-content: stretch; }
+    #physics-presentation.video-active .black-hole-film {
+      width: 100%;
+      max-width: none;
+      height: 100svh;
+      aspect-ratio: auto;
+      margin: 0;
+      box-shadow: none;
+    }
+    #physics-presentation.video-active .black-hole-film::after { display: none; }
+    #physics-presentation.video-active .footer { display: none; }
+    #physics-presentation .horizon-layout {
+      position: relative;
+      width: min(100%, 970px);
+      height: clamp(17rem, 38vw, 25rem);
+      overflow: hidden;
+      margin-top: .2rem;
+    }
+    #physics-presentation .black-hole-large {
+      position: absolute;
+      top: 50%;
+      right: 10%;
+      width: clamp(11rem, 29vw, 19rem);
+      aspect-ratio: 1;
+      border: 1px solid rgba(174,139,255,.45);
+      border-radius: 50%;
+      background: radial-gradient(circle at 43% 39%, #0b1231 0, #010207 44%, #000 66%);
+      box-shadow: 0 0 0 2px rgba(102, 76, 162, .18), 0 0 68px rgba(111,75,202,.34);
+      transform: translateY(-50%);
+    }
+    #physics-presentation .black-hole-large::before {
+      position: absolute;
+      inset: -9%;
+      content: "";
+      border: 1px solid rgba(108,197,255,.3);
+      border-radius: 50%;
+    }
+    #physics-presentation .infall-track {
+      position: absolute;
+      top: 50%;
+      right: 31%;
+      left: 3%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--coral) 20%, var(--coral) 85%, transparent);
+      transform: translateY(-50%) rotate(-6deg);
+      transform-origin: right;
+    }
+    #physics-presentation .infall-dot {
+      position: absolute;
+      top: calc(50% - .9rem);
+      left: 18%;
+      width: 1.8rem;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #fff5da;
+      box-shadow: 0 0 20px rgba(255,237,183,.85);
+    }
+    #physics-presentation .horizon-note {
+      position: absolute;
+      top: 21%;
+      right: 0;
+      color: var(--blue);
+      font-size: clamp(.78rem, 1.45vw, .98rem);
+      line-height: 1.4;
+      text-align: right;
+    }
+    #physics-presentation .horizon-note::after {
+      position: absolute;
+      top: 2.7rem;
+      right: 4.2rem;
+      width: 5.2rem;
+      height: 1px;
+      content: "";
+      background: var(--blue);
+      transform: rotate(32deg);
+      transform-origin: right;
+    }
+    #physics-presentation .collapse-scene {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      align-items: center;
+      width: min(100%, 1000px);
+      min-height: 16rem;
+    }
+    #physics-presentation .collapse-stage {
+      position: relative;
+      height: 12rem;
+    }
+    #physics-presentation .collapse-stage:not(:last-child)::after {
+      position: absolute;
+      top: 50%;
+      right: -.8rem;
+      width: 1.6rem;
+      height: 1px;
+      content: "";
+      background: var(--muted);
+    }
+    #physics-presentation .collapse-stage:not(:last-child)::before {
+      position: absolute;
+      top: calc(50% - .22rem);
+      right: -.8rem;
+      width: .45rem;
+      height: .45rem;
+      content: "";
+      border-top: 1px solid var(--muted);
+      border-right: 1px solid var(--muted);
+      transform: rotate(45deg);
+    }
+    #physics-presentation .star-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #physics-presentation .stage-1 .star-core {
+      width: 8rem;
+      aspect-ratio: 1;
+      background: radial-gradient(circle at 35% 30%, #fff9dc, #ffa079 42%, #9b4a96 74%, transparent 75%);
+      box-shadow: 0 0 35px rgba(255,147,114,.42);
+    }
+    #physics-presentation .stage-2 .star-core {
+      width: 4.6rem;
+      aspect-ratio: 1;
+      background: radial-gradient(circle, #fff6dc, #e87caa 39%, #28104e 72%, transparent 74%);
+      box-shadow: 0 0 25px rgba(220,109,199,.4);
+    }
+    #physics-presentation .stage-3 .star-core {
+      width: 6.8rem;
+      aspect-ratio: 1;
+      border: 1px solid rgba(160,123,255,.44);
+      background: #000;
+      box-shadow: 0 0 32px rgba(112,68,204,.5);
+    }
+    #physics-presentation .stage-3 .star-core::after {
+      position: absolute;
+      top: 50%;
+      left: -31%;
+      width: 162%;
+      height: 20%;
+      content: "";
+      border: 1px solid rgba(255,163,120,.5);
+      border-radius: 50%;
+      transform: translateY(-50%) rotate(-16deg);
+    }
+    #physics-presentation .stage-label {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      color: var(--muted);
+      font-size: .84rem;
+      text-align: center;
+    }
+    #physics-presentation .signal-scene {
+      position: relative;
+      width: min(100%, 1000px);
+      height: clamp(15rem, 36vw, 22rem);
+      overflow: hidden;
+      margin-top: .4rem;
+    }
+    #physics-presentation .far-observer {
+      position: absolute;
+      bottom: 20%;
+      left: 2%;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    #physics-presentation .far-observer::before {
+      display: block;
+      width: 1.7rem;
+      height: 1.7rem;
+      margin-bottom: .5rem;
+      content: "";
+      border: 1px solid var(--blue);
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(108,197,255,.35);
+    }
+    #physics-presentation .signal-hole {
+      position: absolute;
+      top: 48%;
+      right: 8%;
+      width: clamp(9rem, 22vw, 15rem);
+      aspect-ratio: 1;
+      border: 1px solid rgba(169,138,255,.5);
+      border-radius: 50%;
+      background: #000;
+      box-shadow: 0 0 52px rgba(102,67,190,.38);
+      transform: translateY(-50%);
+    }
+    #physics-presentation .signal-hole::after {
+      position: absolute;
+      inset: -11%;
+      content: "";
+      border: 1px solid rgba(108,197,255,.24);
+      border-radius: 50%;
+    }
+    #physics-presentation .redshift-line {
+      position: absolute;
+      top: 48%;
+      right: 26%;
+      left: 17%;
+      height: 1px;
+      transform: rotate(-6deg);
+      transform-origin: right;
+    }
+    #physics-presentation .redshift-line.one { background: linear-gradient(90deg, var(--blue), var(--violet)); }
+    #physics-presentation .redshift-line.two { top: 58%; right: 29%; left: 25%; background: linear-gradient(90deg, transparent, var(--coral)); opacity: .85; }
+    #physics-presentation .redshift-line.three { top: 37%; right: 31%; left: 32%; background: linear-gradient(90deg, transparent, var(--coral)); opacity: .55; }
+    #physics-presentation .signal-label {
+      position: absolute;
+      top: 7%;
+      right: 5%;
+      max-width: 19rem;
+      color: var(--muted);
+      font-size: clamp(.84rem, 1.6vw, 1.05rem);
+      line-height: 1.55;
+      text-align: right;
+    }
+    #physics-presentation .signal-label strong { color: var(--coral); }
+    #physics-presentation .perspective {
+      min-height: 14rem;
+      background: linear-gradient(145deg, rgba(12,29,66,.64), rgba(7,10,28,.08));
+    }
+    #physics-presentation .perspective .icon {
+      display: grid;
+      place-items: center;
+      width: 2.4rem;
+      aspect-ratio: 1;
+      margin-bottom: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--blue);
+      font-size: 1.1rem;
+    }
+    #physics-presentation .perspective p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: clamp(.9rem, 1.6vw, 1.08rem);
+      line-height: 1.55;
+    }
+    #physics-presentation .summary-list {
+      display: grid;
+      gap: 0;
+      width: min(100%, 880px);
+      margin-top: .5rem;
+      border-top: 1px solid var(--line);
+    }
+    #physics-presentation .summary-item {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      gap: 1.1rem;
+      padding: 1.15rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    #physics-presentation .summary-item b {
+      color: var(--blue);
+      font-size: .8rem;
+      letter-spacing: .12em;
+    }
+    #physics-presentation .summary-item span {
+      color: var(--ink);
+      font-size: clamp(1rem, 2.15vw, 1.42rem);
+      line-height: 1.42;
+    }
+    #physics-presentation .footer {
+      position: absolute;
+      right: clamp(1.1rem, 3.4vw, 3.4rem);
+      bottom: clamp(.9rem, 2vw, 1.45rem);
+      left: clamp(1.1rem, 3.4vw, 3.4rem);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 1.2rem;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+    #physics-presentation .progress {
+      height: 2px;
+      overflow: hidden;
+      background: rgba(199,219,255,.18);
+    }
+    #physics-presentation .progress > span {
+      display: block;
+      width: 7.142%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--violet), var(--coral));
+      transition: width .35s ease;
+    }
+    #physics-presentation .nav {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    #physics-presentation .nav button {
+      padding: .28rem .62rem;
+      border: 1px solid rgba(199,219,255,.25);
+      color: var(--ink);
+      background: rgba(9,18,43,.6);
+      font: inherit;
+      font-size: .75rem;
+      cursor: pointer;
+    }
+    #physics-presentation .nav button:hover,
+    #physics-presentation .nav button:focus-visible {
+      border-color: var(--blue);
+      outline: none;
+    }
+    #physics-presentation .nav button:disabled { opacity: .38; cursor: default; }
+    #physics-presentation .hint { color: var(--muted); white-space: nowrap; }
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 620px) {
+      #physics-presentation .question-grid,
+      #physics-presentation .two-up,
+      #physics-presentation .perspective-grid,
+      #physics-presentation .metric-layout { grid-template-columns: 1fr; }
+      #physics-presentation .three-up { grid-template-columns: 1fr 1fr 1fr; gap: .45rem; }
+      #physics-presentation .question,
+      #physics-presentation .fact,
+      #physics-presentation .perspective { padding: .9rem; }
+      #physics-presentation .timeline { grid-template-columns: 4.9rem minmax(0, 1fr); gap: 0 .85rem; }
+      #physics-presentation .timeline .copy { padding-left: 1rem; }
+      #physics-presentation .collapse-stage:not(:last-child)::after,
+      #physics-presentation .collapse-stage:not(:last-child)::before { display: none; }
+      #physics-presentation .stage-1 .star-core { width: 5rem; }
+      #physics-presentation .stage-2 .star-core { width: 3.2rem; }
+      #physics-presentation .stage-3 .star-core { width: 4.5rem; }
+      #physics-presentation .collapse-stage { height: 9.5rem; }
+      #physics-presentation .footer { grid-template-columns: 1fr; gap: .55rem; }
+      #physics-presentation .nav { justify-content: space-between; }
+      #physics-presentation .hint { display: none; }
+      #physics-presentation .radius-diagram { width: 13rem; }
+      #physics-presentation .signal-label { max-width: 13rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #physics-presentation .slide { animation: none; }
+      #physics-presentation .progress > span { transition: none; }
+    }
+  </style>
+
+  <div class="deck">
+    <section class="slide active" data-title="표지" aria-hidden="false">
+      <span class="slide-number">01 / 14</span>
+      <div>
+        <p class="eyebrow">Physics presentation</p>
+        <h1>빛의 속도,<br><span class="gradient-text">시간, 그리고 블랙홀</span></h1>
+        <div class="keyline"></div>
+        <p class="lead">질량을 가진 물체는 왜 빛보다 빨라질 수 없을까?<br>그리고 강한 중력은 시간을 어떻게 바꿀까?</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="두 질문" aria-hidden="true">
+      <span class="slide-number">02 / 14</span>
+      <div>
+        <p class="eyebrow">two questions</p>
+        <h2>우리가 풀어볼<br>두 개의 질문</h2>
+        <div class="question-grid">
+          <article class="question">
+            <span>QUESTION 01</span>
+            <strong>빛보다 느리게 출발한 물체가, 빛보다 빨라질 수 있을까?</strong>
+          </article>
+          <article class="question">
+            <span>QUESTION 02</span>
+            <strong>시간은 누구에게나 똑같은 속도로 흐를까?</strong>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="에너지와 속도" aria-hidden="true">
+      <span class="slide-number">03 / 14</span>
+      <div>
+        <p class="eyebrow">special relativity</p>
+        <h2><span class="gradient-text">E = mc²</span>는<br>정지해 있는 물체의 에너지</h2>
+        <div class="two-up">
+          <div>
+            <p class="formula">E<sub>0</sub> = mc²</p>
+            <p class="formula-note">흔히 보는 식은 <span class="emphasis">정지 질량 m</span>을 가진 물체의 정지 에너지입니다.</p>
+          </div>
+          <div>
+            <p class="formula">E = γmc²</p>
+            <p class="formula-note">움직이는 물체에는 상대론적 인자 <span class="emphasis">γ</span>가 더해집니다.</p>
+          </div>
+        </div>
+        <p class="callout">핵심은 “속도 자체가 c가 된다”가 아니라, <strong>v가 c에 가까워질수록 γ가 끝없이 커진다</strong>는 점입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="무한한 에너지 장벽" aria-hidden="true">
+      <span class="slide-number">04 / 14</span>
+      <div>
+        <p class="eyebrow">the energy wall</p>
+        <h2>빛의 속도에 가까워질수록<br>필요한 에너지는 <span class="gradient-text">무한히 증가</span>한다</h2>
+        <p class="formula small">γ = 1 / √(1 − v²/c²)</p>
+        <div class="velocity-visual" role="img" aria-label="속도가 빛의 속도에 가까워질수록 에너지가 급격히 증가하는 곡선">
+          <div class="velocity-axis"></div>
+          <div class="velocity-label">속도 v</div>
+          <div class="c-line"><span>빛의 속도 c</span></div>
+          <svg class="energy-curve" viewBox="0 0 780 190" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,172 C160,172 315,170 430,159 C525,150 590,132 632,99 C665,73 683,42 696,5"></path>
+            <path class="arrow" d="M693 16 L696 0 L682 9 Z"></path>
+          </svg>
+          <p class="curve-caption">v → c 이면 분모 → 0<br><strong>γ → ∞</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="왜 질량은 c를 넘지 못하나" aria-hidden="true">
+      <span class="slide-number">05 / 14</span>
+      <div>
+        <p class="eyebrow">speed limit</p>
+        <h2>질량이 있는 물체는<br><span class="gradient-text">c에 도달할 수 없다</span></h2>
+        <div class="three-up">
+          <article class="fact">
+            <span>01</span>
+            <h3>가속할수록</h3>
+            <p class="lead">에너지는 계속 늘어납니다.</p>
+          </article>
+          <article class="fact">
+            <span>02</span>
+            <h3>c에 가까워질수록</h3>
+            <p class="lead">같은 속도 증가에 더 큰 에너지가 듭니다.</p>
+          </article>
+          <article class="fact">
+            <span>03</span>
+            <h3>v = c라면</h3>
+            <p class="lead">필요 에너지가 무한대로 발산합니다.</p>
+          </article>
+        </div>
+        <p class="callout">따라서 무한한 에너지를 공급할 수 없는 한, 질량을 가진 물체가 빛의 속도를 넘는 경로는 없습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="광자는 왜 가능한가" aria-hidden="true">
+      <span class="slide-number">06 / 14</span>
+      <div>
+        <p class="eyebrow">massless light</p>
+        <h2>그렇다면 빛은<br>왜 <span class="gradient-text">c로 움직일까?</span></h2>
+        <div class="two-up">
+          <div class="photon-scene" role="img" aria-label="광자와 빛의 파동을 나타낸 그림">
+            <div class="photon-ring"></div>
+            <div class="wave"></div>
+          </div>
+          <div>
+            <p class="formula">m<sub>0</sub> = 0</p>
+            <p class="formula-note">광자는 <span class="emphasis">정지 질량이 0</span>인 입자입니다. 가속해서 c에 이르는 것이 아니라, 진공에서 생성된 순간부터 c로 전파됩니다.</p>
+            <p class="formula small">E = pc</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="중력의 새로운 그림" aria-hidden="true">
+      <span class="slide-number">07 / 14</span>
+      <div>
+        <p class="eyebrow">from force to geometry</p>
+        <h2>중력은 멀리서 당기는 힘일까,<br>아니면 <span class="gradient-text">시공간의 모양</span>일까?</h2>
+        <div class="timeline">
+          <div class="year">1687</div>
+          <div class="copy"><strong>뉴턴</strong> — 질량을 가진 물체는 서로 끌어당긴다. 중력의 효과를 매우 정확하게 계산할 수 있다.</div>
+          <div class="year">1915</div>
+          <div class="copy"><strong>아인슈타인</strong> — 질량과 에너지가 시공간을 휘게 하고, 물체는 그 휘어진 시공간을 따라 움직인다.</div>
+        </div>
+        <p class="callout">태양이 지구를 ‘줄로 잡아당긴다’기보다, 태양이 만든 <strong>기하학적 경로</strong>를 지구가 따라가는 것으로 볼 수 있습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="시공간 곡률" aria-hidden="true">
+      <span class="slide-number">08 / 14</span>
+      <div>
+        <p class="eyebrow">curved spacetime</p>
+        <h2>질량과 에너지는<br>시공간의 <span class="gradient-text">측정자와 눈금</span>을 바꾼다</h2>
+        <div class="spacetime-visual" role="img" aria-label="질량 주위로 휘어진 시공간 격자">
+          <svg viewBox="0 0 960 340" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 35 C220 35 315 35 380 86 C435 130 470 200 480 265 C490 200 525 130 580 86 C645 35 740 35 960 35"></path>
+            <path d="M0 92 C215 92 324 92 392 129 C441 157 469 215 480 275 C491 215 519 157 568 129 C636 92 745 92 960 92"></path>
+            <path d="M0 150 C225 150 340 150 410 171 C452 184 472 227 480 286 C488 227 508 184 550 171 C620 150 735 150 960 150"></path>
+            <path d="M0 208 C235 208 354 208 425 215 C460 219 476 243 480 296 C484 243 500 219 535 215 C606 208 725 208 960 208"></path>
+            <path d="M90 0 C90 98 124 148 250 183 C358 213 429 241 480 318 C531 241 602 213 710 183 C836 148 870 98 870 0"></path>
+            <path d="M245 0 C245 87 282 146 355 187 C416 220 456 256 480 328 C504 256 544 220 605 187 C678 146 715 87 715 0"></path>
+            <path d="M360 0 C360 90 391 151 430 204 C456 238 472 275 480 337 C488 275 504 238 530 204 C569 151 600 90 600 0"></path>
+          </svg>
+          <div class="mass-orb"></div>
+          <p class="spacetime-caption">그림은 비유입니다. 실제로 휘는 것은 3차원 공간만이 아니라 <strong>공간과 시간으로 이루어진 4차원 시공간</strong>입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="슈바르츠실트 해" aria-hidden="true">
+      <span class="slide-number">09 / 14</span>
+      <div class="metric-layout">
+        <div class="metric-copy">
+          <p class="eyebrow">schwarzschild solution</p>
+          <h2>구대칭 질량 바깥의<br>시공간을 푼 해</h2>
+          <p class="formula small">ds² = −(1 − r<sub>s</sub>/r)c²dt² + (1 − r<sub>s</sub>/r)<sup>−1</sup>dr² + r²dΩ²</p>
+          <p class="formula-note">슈바르츠실트 메트릭은 <span class="emphasis">구형·비회전 질량</span>의 바깥 시공간을 묘사합니다. 여기서 r<sub>s</sub>는 특별한 반지름입니다.</p>
+          <p class="formula small">r<sub>s</sub> = 2GM/c²</p>
+        </div>
+        <div class="radius-diagram" role="img" aria-label="블랙홀 중심과 사건의 지평선, 반지름 r을 나타낸 도식">
+          <div class="black-hole"></div>
+          <span class="center-label">r = 0<br>중심</span>
+          <span class="horizon-label">r = r<sub>s</sub><br>사건의 지평선</span>
+          <span class="r-label">반지름 r</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide video-slide" data-title="블랙홀 영상" aria-hidden="true">
+      <figure class="black-hole-film">
+        <video autoplay muted loop playsinline preload="auto" aria-label="회전하는 블랙홀 강착원반의 NASA 시각화 영상">
+          <source src="black-hole-accretion-disk.webm" type="video/webm">
+          <source src="https://svs.gsfc.nasa.gov/vis/a010000/a013300/a013326/BH_AccretionDisk_Sim_Stationary_1080.webm" type="video/webm">
+        </video>
+      </figure>
+    </section>
+
+    <section class="slide" data-title="사건의 지평선과 특이점" aria-hidden="true">
+      <span class="slide-number">10 / 14</span>
+      <div>
+        <p class="eyebrow">two very different places</p>
+        <h2><span class="gradient-text">사건의 지평선</span>과<br><span class="gradient-text">특이점</span>은 다릅니다</h2>
+        <div class="two-up">
+          <article class="fact">
+            <span>r = rₛ</span>
+            <h3>사건의 지평선</h3>
+            <p class="lead">빛조차 바깥으로 향할 수 없는 경계입니다. 슈바르츠실트 좌표의 발산은 <strong>좌표 특이점</strong>이며, 그 자체가 물리적 벽은 아닙니다.</p>
+          </article>
+          <article class="fact">
+            <span>r = 0</span>
+            <h3>중심의 특이점</h3>
+            <p class="lead">고전적 일반상대론에서는 곡률이 발산합니다. 이 지점은 현재 이론만으로는 완전하게 설명하기 어렵습니다.</p>
+          </article>
+        </div>
+        <p class="callout">블랙홀은 ‘무엇이든 빨아들이는 구멍’이라기보다, <strong>바깥으로의 탈출 경로가 사라지는 시공간 영역</strong>입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="붕괴와 블랙홀" aria-hidden="true">
+      <span class="slide-number">11 / 14</span>
+      <div>
+        <p class="eyebrow">gravitational collapse</p>
+        <h2>무거운 별은 연료가 다하면<br>자기 중력에 맞설 힘을 잃을 수 있다</h2>
+        <div class="collapse-scene" role="img" aria-label="큰 별이 붕괴하여 블랙홀이 되는 세 단계 도식">
+          <div class="collapse-stage stage-1"><div class="star-core"></div><span class="stage-label">핵융합 중인 무거운 별</span></div>
+          <div class="collapse-stage stage-2"><div class="star-core"></div><span class="stage-label">연료 고갈 · 중력 붕괴</span></div>
+          <div class="collapse-stage stage-3"><div class="star-core"></div><span class="stage-label">사건의 지평선 형성</span></div>
+        </div>
+        <p class="callout">오펜하이머와 스나이더는 1939년, 충분히 무거운 별의 붕괴가 계속 진행될 수 있음을 보였습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="떨어지는 사람의 관점" aria-hidden="true">
+      <span class="slide-number">12 / 14</span>
+      <div>
+        <p class="eyebrow">the infalling observer</p>
+        <h2>떨어지는 물체는<br>사건의 지평선을 <span class="gradient-text">유한한 자기 시간</span>에 건넌다</h2>
+        <div class="horizon-layout" role="img" aria-label="물체가 사건의 지평선을 향해 떨어지는 도식">
+          <div class="infall-track"></div>
+          <div class="infall-dot"></div>
+          <div class="black-hole-large"></div>
+          <p class="horizon-note">사건의 지평선<br>r = r<sub>s</sub></p>
+        </div>
+        <p class="callout">특히 큰 블랙홀이라면 경계선 자체에서 갑자기 튕기거나 ‘시간이 멈추는’ 현상을 로컬하게 느끼지는 않습니다. 다만 더 안쪽의 조석력은 위험해질 수 있습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="멀리서 보는 관점" aria-hidden="true">
+      <span class="slide-number">13 / 14</span>
+      <div>
+        <p class="eyebrow">the distant observer</p>
+        <h2>멀리 있는 관측자에게는<br>신호가 점점 <span class="gradient-text">붉어지고 희미해진다</span></h2>
+        <div class="signal-scene" role="img" aria-label="멀리 있는 관찰자에게 블랙홀 근처 물체의 빛이 붉게 늘어져 보이는 도식">
+          <div class="far-observer">멀리 있는 관측자</div>
+          <div class="redshift-line one"></div>
+          <div class="redshift-line two"></div>
+          <div class="redshift-line three"></div>
+          <div class="signal-hole"></div>
+          <p class="signal-label">물체가 보내는 빛은 강한 중력을 빠져나오며 <strong>중력적 적색편이</strong>를 겪습니다. 신호 간격은 길어지고, 밝기는 약해집니다.</p>
+        </div>
+        <p class="callout">그래서 멀리서 본 영상에서는 물체가 지평선 근처에서 끝없이 느려지는 듯 보입니다. 이것은 <strong>보이는 방식과 신호의 지연</strong>에 관한 설명입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="두 관점의 조화" aria-hidden="true">
+      <span class="slide-number">14 / 14</span>
+      <div>
+        <p class="eyebrow">one event, two descriptions</p>
+        <h2>모순이 아니라,<br><span class="gradient-text">관측 방식의 차이</span>입니다</h2>
+        <div class="perspective-grid">
+          <article class="perspective">
+            <div class="icon" aria-hidden="true">⌁</div>
+            <span>FAR AWAY</span>
+            <h3>멀리 있는 관측자</h3>
+            <p>도착하는 빛 신호가 늦어지고 붉어지므로, 지평선 통과 장면을 유한한 시간 안에 직접 보지 못합니다.</p>
+          </article>
+          <article class="perspective">
+            <div class="icon" aria-hidden="true">●</div>
+            <span>FALLING IN</span>
+            <h3>떨어지는 관측자</h3>
+            <p>자신의 시계로는 유한한 시간이 지나 지평선을 통과합니다. 경계에서 보편적인 ‘정지’는 없습니다.</p>
+          </article>
+        </div>
+        <p class="callout">일반상대론은 한 사건을 서로 다른 좌표와 서로 다른 관측자에게 일관되게 설명합니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="결론" aria-hidden="true">
+      <span class="slide-number">16 / 16</span>
+      <div>
+        <h1 class="gradient-text">결론</h1>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <div class="nav">
+      <button type="button" class="previous" aria-label="이전 화면">← 이전</button>
+      <span class="hint">Space 또는 →</span>
+      <button type="button" class="next" aria-label="다음 화면">다음 →</button>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const root = document.getElementById("physics-presentation");
+      const slides = Array.from(root.querySelectorAll(".slide"));
+      const previous = root.querySelector(".previous");
+      const next = root.querySelector(".next");
+      const progress = root.querySelector(".progress > span");
+      const film = root.querySelector(".black-hole-film video");
+      let current = 0;
+      let touchStartX = null;
+
+      function show(index) {
+        current = Math.max(0, Math.min(index, slides.length - 1));
+        slides.forEach(function (slide, slideIndex) {
+          const active = slideIndex === current;
+          slide.classList.toggle("active", active);
+          slide.setAttribute("aria-hidden", active ? "false" : "true");
+          const counter = slide.querySelector(".slide-number");
+          if (counter) counter.textContent = String(slideIndex + 1).padStart(2, "0") + " / " + slides.length;
+        });
+        if (film) {
+          const activeFilm = slides[current].contains(film);
+          root.classList.toggle("video-active", activeFilm);
+          if (activeFilm) {
+            film.play().catch(function () {});
+          } else {
+            film.pause();
+          }
+        }
+        progress.style.width = ((current + 1) / slides.length * 100) + "%";
+        previous.disabled = current === 0;
+        next.disabled = false;
+        next.textContent = current === slides.length - 1 ? "처음으로 ↺" : "다음 →";
+        root.setAttribute("aria-label", "빛의 속도, 시간, 그리고 블랙홀 발표 — " + slides[current].dataset.title);
+      }
+
+      function goNext() {
+        show(current === slides.length - 1 ? 0 : current + 1);
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === " " || event.key === "ArrowRight" || event.key === "Enter") {
+          event.preventDefault();
+          goNext();
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          show(current - 1);
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          show(0);
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          show(slides.length - 1);
+        }
+      });
+
+      previous.addEventListener("click", function () { show(current - 1); });
+      next.addEventListener("click", goNext);
+      root.addEventListener("pointerdown", function (event) { touchStartX = event.clientX; });
+      root.addEventListener("pointerup", function (event) {
+        if (touchStartX === null) return;
+        const distance = event.clientX - touchStartX;
+        if (Math.abs(distance) > 55) show(current + (distance < 0 ? 1 : -1));
+        touchStartX = null;
+      });
+      root.setAttribute("tabindex", "0");
+      root.focus();
+      show(0);
+    }());
+  </script>
+</main>
+
+</body>
+</html>
